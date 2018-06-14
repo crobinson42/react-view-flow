@@ -1,0 +1,32 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": [
+    "react-app",
+    "airbnb",
+    "prettier"
+  ],
+  "rules": {
+    "import/extensions": [0],
+    "import/first": [0],
+    "import/no-extraneous-dependencies": [0],
+    "import/no-unresolved": [0],
+    "import/prefer-default-export": [0],
+    "jsx-a11y/anchor-is-valid": [ "error", {
+      "components": [ "Link" ],
+      "specialLink": [ "to" ]
+    }],
+    "jsx-a11y/href-no-hash": [0], // needed due to versioning issue between airbnb & cra
+    "jsx-a11y/label-has-for": [0],
+    "jsx-a11y/no-static-element-interactions": [0],
+    "jsx-a11y/no-noninteractive-element-interactions": [0],
+    "no-return-assign": [0], // redux reducers use return-assignment
+    "react/no-danger": [0], // we use this for spacers
+    "react/no-typos": [0], // eslint thinks our variable names are typos
+    "react/no-unescaped-entities": [0],
+    "semi": [2, "never"]
+  }
+}

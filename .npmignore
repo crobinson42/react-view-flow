@@ -1,0 +1,12 @@
+.babelrc
+.editorconfig
+.eslintrc
+.gitignore
+.prettierrc
+.travis.yml
+example
+package-lock.json
+README.md
+src
+webpack.config.js
+yarn.lock
