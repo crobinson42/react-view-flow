@@ -10,6 +10,8 @@ _Inspired by this awesome project [react-step-wizard](https://github.com/jcmcnea
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
+![2018-06-18 10 09 00](https://user-images.githubusercontent.com/5973579/41551092-ab56e34c-72df-11e8-964a-412595b1a857.gif)
+
 ## Getting Started
 
 ```
