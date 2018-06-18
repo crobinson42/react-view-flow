@@ -5,19 +5,15 @@
   "main": "dist/bundle.min.js",
   "scripts": {
     "build": "NODE_ENV=production && webpack --progress --optimize-minimize",
-    "commitmsg": "commitlint -E GIT_PARAMS",
+    "commitlint": "commitlint -E GIT_PARAMS",
     "dev": "webpack-dev-server --config webpack.config.dev.js --hot --hmr --watch",
     "lint": "eslint --fix src/**/*.{js,jsx}",
+    "precommit": "npm run lint",
+    "prepush": "npm test",
     "travis-deploy-once": "travis-deploy-once",
     "test": "jest",
     "semantic-release": "semantic-release"
   },
-  "pre-commit": [
-    "lint"
-  ],
-  "pre-push": [
-    "test"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/crobinson42/react-view-flow.git"
@@ -80,9 +76,5 @@
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.6",
     "webpack-dev-server": "^3.1.4"
-  },
-  "dependencies": {
-    "pre-commit": "^1.2.2",
-    "pre-push": "^0.1.1"
   }
 }
