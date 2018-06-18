@@ -1,8 +1,14 @@
 # React View Flow
 
-Credit due: inspiration from this awesome project [react-step-wizard](https://github.com/jcmcneal/react-step-wizard)
+A view/screen/component stepper with optional transition animations and URL hash state. Very flexible and extendable
+through suedo-controlled component API.
 
+_Inspired by this awesome project [react-step-wizard](https://github.com/jcmcneal/react-step-wizard)_
+
+[![npm version](https://badge.fury.io/js/react-view-flow.svg)](https://badge.fury.io/js/react-view-flow)
+[![Build Status](https://travis-ci.org/crobinson42/react-view-flow.svg?branch=master)](https://travis-ci.org/crobinson42/react-view-flow)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 ## Getting Started
 
@@ -18,21 +24,90 @@ yarn add react-view-flow
 import { ViewFlow, Step } from 'react-view-flow'
 ```
 
-## Example
+## Examples
 
-```html
+```jsx
 <ViewFlow>
-    <Step><MyFirstScreen /></Step>
-
-    <Step><MySecondScreen /></Step>
-
-    <Step><SomeOtherComponent /></Step>
-
-    ...
+  <Step>
+    <MyFirstScreen />
+  </Step>
+  <Step>
+    <MySecondScreen />
+  </Step>
+  <Step>
+    <SomeOtherComponent />
+  </Step>
+  ...
 </ViewFlow>
 ```
 
-> More examples in `example/` directory
+#### Your app defines the step screens and is handed down props to control the flow
+
+```jsx
+import React from 'react'
+
+const MyFirstScreen = ({ currentStep, nextStep }) => (
+    <div>
+        <h1>Step # {currentStep}</h1>
+        
+        <button onClick={nextStep}>Next</button>
+    </div>
+)
+
+const MySecondScreen = ({ currentStep, nextStep, previousStep }) => (
+    <div>
+        <h1>Step # {currentStep}</h1>
+        
+        <button onClick={previousStep}>Back</button>
+        {' '}
+        <button onClick={nextStep}>Next</button>
+    </div>
+)
+
+const ExampleFlow = () => (
+    <ViewFlow>
+      <Step>
+        <MyFirstScreen />
+      </Step>
+      
+      <Step>
+        <MySecondScreen />
+      </Step>
+    </ViewFlow>
+)
+```
+
+#### All `<ViewFlow />` Props
+
+```jsx
+<ViewFlow
+  hashKey="step"
+  initialStep="2"
+  noAnimation
+  onComplete={() => {
+    /* fired after last step */
+  }}
+  onStep={() => {
+    /* fired on step change */
+  }}
+  ref={el => (this.viewflowRef = el)}
+  transitionDirection="horizontal"
+  withHashState
+>
+  <Step>
+    <MyFirstScreen />
+  </Step>
+  <Step>
+    <MySecondScreen />
+  </Step>
+  <Step>
+    <SomeOtherComponent />
+  </Step>
+  ...
+</ViewFlow>
+```
+
+> More examples in `example/` directory. Easy to run locally, pull the git repo then run `npm i && npm run dev` -> `http://localhost:8080`
 
 ## `<ViewFlow />` Component
 
@@ -41,32 +116,16 @@ component must only contain `<Step />` components as children.
 
 #### Props
 
-| Name          | Default                         | Type   | Description                              |
-| ------------- | ------------------------------- | ------ | ---------------------------------------- |
-| `hashState` | `false` | Boolean | Use url hash to store the current step state |
-|  |  |  |
-| `step` | `1` | Number | The actively rendered component |
-| `transitions` | Animate.css (see example below) | Object | The class names to apply for transitions |
-
-#### `<ViewFlow />` `transitions` Prop
-
-By default `react-view-flow` provides animated transitions applied to step changes
-using the [animate.css](https://daneden.github.io/animate.css/) lib. You can override
-the transitions by passing in custom CSS classes to the `transitions` prop in
-`<ViewFlow>`.
-
-```jsx
-<ViewFlow
-  transitions={{
-    enterRight: 'custom-transition-class-from-right',
-    enterLeft: 'custom-transition-class-from-left',
-    exitRight: 'custom-transition-class-to-right',
-    exitLeft: 'custom-transition-class-to-left',
-  }}
->
-  ...
-</ViewFlow>
-```
+| Name          | Default                         | Type    | Description                                  |
+| ------------- | ------------------------------- | ------- | -------------------------------------------- |
+| `initialStep`   | `1`                         | Number, String |
+| `hashKey`   | `step`                         | String | The default key to use in url hash if prop `withHashState` is true
+| `noAnimation`   | `false`                         | Boolean | Do not show animations on step transitions
+| `onComplete`   | `() => void`                         | Function | A callback that is fired when `nextStep()` is called and there are no more steps
+| `onStep`   | `(stepNumber) => void`                         | Function | A callback that is fired after step change
+| `ref`        | `({ complete: Function, currentStep: Number, firstStep: Function, goToStep: Function, lastStep: Function, nextStep: Function, previousStep: Function, totalSteps: Number }) => void`                             | Function  | A callback fired with an object of methods to manipulate the `<ViewFlow />` instance 
+| `transitionDirection` | 'horizontal' | String, `horizontal` or `vertical`  | Optionally set the direction of transition animations     |
+| `withHashState` | 'false' | Boolean  | Keep the step state in the URL hash |
 
 ## `<Step />` Component
 
@@ -77,8 +136,13 @@ child component.
 
 | Name | Default | Type | Description |
 | ---- | ------- | ---- | ----------- |
-|      |         |      |
-|      |         |      |
+| `currentStep` | Number | Number | The step number
+| `firstStep` | `() => void` | Func | Method to go to the first step
+| `goToStep` | `() => void` | Func | Method to go to a specific step number
+| `lastStep` | `() => void` | Func | Method to go to the last step
+| `nextStep` | `() => void` | Func | Method to go to the next step
+| `previousStep` | `() => void` | Func | Method to go to the previous step
+| `totalSteps` | Number | Number | The number of steps in the `<ViewFlow />` container
 
 ## `<Step />` Child Component Props
 
@@ -110,18 +174,3 @@ const MyStepComponent = props => (
 
 export default MyStepComponent
 ```
-
-### Initial Step
-
----
-
-The order of your steps in JSX will be loaded in the same order in the browser.
-However, you may specify which step to start on by passing in the `active`
-prop to `<Step>`. This doesn't reorder it to be first but rather skips directly
-to it on start.
-
-```html
-<Step active><Step7 /></Step>
-```
-
-\*Neglecting to pass in the `active` prop will result in the first component displaying first.

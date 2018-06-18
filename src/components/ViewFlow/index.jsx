@@ -72,7 +72,9 @@ class ViewFlow extends Component {
   })
 
   getStepComponentWithProps = (stepIndex, addProps) => {
+    // eslint-disable-next-line no-restricted-globals
     if (isNaN(+stepIndex)) {
+      // eslint-disable-next-line no-console
       console.warn(`<ViewFlow /> step ${stepIndex} is not valid, must be a Number`)
 
       return null
@@ -88,6 +90,7 @@ class ViewFlow extends Component {
     const props = {
       currentStep: step + 1,
       firstStep: this.firstStep,
+      goToStep: stepNumber => this.goToStep(stepNumber - 1),
       lastStep: this.lastStep,
       nextStep: this.nextStep,
       parentDimensions: {

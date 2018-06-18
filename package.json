@@ -6,7 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production && webpack --progress --optimize-minimize",
     "dev": "webpack-dev-server --config webpack.config.dev.js --hot --hmr --watch",
-    "lint": "eslint --fix src/",
+    "lint": "eslint --fix src/**/*.{js,jsx}",
     "travis-deploy-once": "travis-deploy-once",
     "test": "jest",
     "semantic-release": "semantic-release"
