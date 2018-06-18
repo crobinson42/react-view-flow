@@ -5,8 +5,10 @@
   "main": "dist/bundle.min.js",
   "scripts": {
     "build": "NODE_ENV=production && webpack --progress --optimize-minimize",
-    "prepublish": "rm -rf ./dist && yarn build",
+    "dev": "webpack-dev-server --config webpack.config.dev.js --hot --hmr --watch",
+    "lint": "eslint --fix src/",
     "travis-deploy-once": "travis-deploy-once",
+    "test": "jest",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -19,6 +21,7 @@
     "stepper",
     "flow",
     "multistep",
+    "router",
     "wizard"
   ],
   "author": "Cory Robinson <coryrobinson42@gmail.com>",
@@ -43,11 +46,28 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.9.1",
+    "jest": "^23.1.0",
+    "query-string": "^6.1.0",
     "react": "^16.4.1",
     "semantic-release": "^15.5.2",
     "style-loader": "^0.21.0",
+    "travis-deploy-once": "^5.0.0",
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.6",
-    "travis-deploy-once": "^5.0.0"
+    "webpack-dev-server": "^3.1.4",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "^23.0.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "classnames": "^2.2.6",
+    "eslint-config-react-app": "^2.1.0",
+    "eslint-plugin-flowtype": "^2.49.3",
+    "html-webpack-plugin": "^3.2.0",
+    "lodash.merge": "^4.6.1",
+    "prop-types": "^15.6.1",
+    "react-dom": "^16.4.1",
+    "react-transition-group": "^2.3.1",
+    "regenerator-runtime": "^0.11.1"
   }
 }

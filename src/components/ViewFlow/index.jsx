@@ -1,0 +1,256 @@
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
+import url from '../../util/url'
+
+const CSS_TRANSITION_DURATION = 200
+
+class ViewFlow extends Component {
+  constructor(props) {
+    super(props)
+
+    const step =
+      (props.withHashState && url.getStep() - 1) || props.initialStep - 1 || 0
+
+    this.state = {
+      containerHeight: 0,
+      containerWidth: 0,
+      step,
+      transitioning: false,
+      exitDirection: 'left',
+    }
+  }
+
+  componentDidMount() {
+    this.updateContainerDimensions()
+
+    if (this.props.ref) {
+      this.props.ref(this.getRefObject())
+    }
+
+    if (this.props.withHashState) {
+      if (this.props.hashKey) {
+        url.setHashKey(this.props.hashKey)
+      }
+
+      this.updateHash()
+
+      window.addEventListener('hashchange', this.hashChangeHandler)
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.updateContainerDimensions()
+
+    if (prevState.step !== this.state.step) {
+      if (this.props.onStep) {
+        this.props.onStep(this.state.step + 1)
+      }
+
+      if (this.props.withHashState) {
+        this.updateHash()
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.withHashState) {
+      window.removeEventListener('hashchange', this.hashChangeHandler)
+    }
+  }
+
+  getRefObject = () => ({
+    __ViewFlow: this,
+    complete: this.complete,
+    currentStep: this.state.step + 1,
+    firstStep: this.firstStep,
+    goToStep: stepNumber => this.goToStep(stepNumber - 1),
+    lastStep: this.lastStep,
+    nextStep: this.nextStep,
+    previousStep: this.previousStep,
+    totalSteps: this.props.children.length,
+  })
+
+  getStepComponentWithProps = (stepIndex, addProps) => {
+    if (isNaN(+stepIndex)) {
+      console.warn(`<ViewFlow /> step ${stepIndex} is not valid, must be a Number`)
+
+      return null
+    }
+
+    const { children } = this.props
+    const { containerHeight, containerWidth, step } = this.state
+
+    if (!children.length || !children[stepIndex]) {
+      return null
+    }
+
+    const props = {
+      currentStep: step + 1,
+      firstStep: this.firstStep,
+      lastStep: this.lastStep,
+      nextStep: this.nextStep,
+      parentDimensions: {
+        height: containerHeight,
+        width: containerWidth,
+      },
+      previousStep: this.previousStep,
+      totalSteps: children.length,
+      ...addProps,
+    }
+
+    return React.cloneElement(children[stepIndex], {
+      ...props,
+    })
+  }
+
+  complete = () => {
+    if (this.props.onComplete) {
+      this.props.onComplete()
+    }
+
+    if (this.props.withHashState) {
+      url.clearHash()
+    }
+  }
+
+  firstStep = () => {
+    this.goToStep(this.props.children[0])
+  }
+
+  goToStep = stepIndex => {
+    if (this.props.noAnimation) {
+      return this.setState({
+        step: stepIndex,
+      })
+    }
+
+    let exitDirection = 'left'
+
+    if (this.state.step < stepIndex) {
+      exitDirection = 'left'
+    } else if (this.state.step > stepIndex) {
+      exitDirection = 'right'
+    } else {
+      return null
+    }
+
+    this.setState(
+      {
+        transitioning: true,
+        exitDirection,
+      },
+      () => {
+        setTimeout(
+          () => {
+            this.setState({
+              step: stepIndex,
+              transitioning: false,
+            })
+          },
+          // we add time so that the final state .exited is applied
+          CSS_TRANSITION_DURATION + 50,
+        )
+      },
+    )
+
+    return null
+  }
+
+  hashChangeHandler = () => {
+    const hash = url.getStep()
+
+    if (hash !== this.state.step + 1) {
+      this.goToStep(hash - 1)
+    }
+  }
+
+  lastStep = () => {
+    this.goToStep(this.props.children.length - 1)
+  }
+
+  nextStep = () => {
+    if (!this.props.children[this.state.step + 1]) {
+      return this.complete()
+    }
+
+    return this.goToStep(this.state.step + 1)
+  }
+
+  previousStep = () => {
+    if (this.props.children[this.state.step - 1]) {
+      this.goToStep(this.state.step - 1)
+    }
+  }
+
+  updateContainerDimensions = () => {
+    if (
+      this.containerRef &&
+      (this.containerRef.offsetHeight !== this.state.containerHeight ||
+        this.containerRef.offsetWidth !== this.state.containerWidth)
+    ) {
+      this.setState({
+        containerHeight: this.containerRef.offsetHeight,
+        containerWidth: this.containerRef.offsetWidth,
+      })
+    }
+  }
+
+  updateHash = () => url.setStep(this.state.step + 1)
+
+  render() {
+    const {
+      containerHeight,
+      containerWidth,
+      exitDirection,
+      step,
+      transitioning,
+    } = this.state
+
+    const { transitionDirection } = this.props
+
+    if (!this.props.children || !this.props.children.length) return null
+
+    return (
+      <div
+        className="react-view-flow-container"
+        ref={el => (this.containerRef = el)}
+      >
+        {this.getStepComponentWithProps(step, {
+          exitDirection,
+          parentDimensions: {
+            height: containerHeight,
+            width: containerWidth,
+          },
+          show: !transitioning,
+          transitionDirection,
+        })}
+      </div>
+    )
+  }
+}
+
+ViewFlow.propTypes = {
+  children: PropTypes.node,
+  initialStep: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  hashKey: PropTypes.string,
+  noAnimation: PropTypes.bool,
+  onComplete: PropTypes.func,
+  onStep: PropTypes.func,
+  ref: PropTypes.func,
+  transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
+  withHashState: PropTypes.bool,
+}
+ViewFlow.defaultProps = {
+  children: [],
+  initialStep: 1,
+  hashKey: 'step',
+  noAnimation: false,
+  onComplete: null,
+  onStep: null,
+  ref: null,
+  transitionDirection: 'horizontal',
+  withHashState: false,
+}
+
+export default ViewFlow
