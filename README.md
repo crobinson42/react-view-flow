@@ -12,6 +12,10 @@ _Inspired by this awesome project [react-step-wizard](https://github.com/jcmcnea
 
 ![2018-06-18 10 09 00](https://user-images.githubusercontent.com/5973579/41551092-ab56e34c-72df-11e8-964a-412595b1a857.gif)
 
+![2018-06-19 15 32 05](https://user-images.githubusercontent.com/5973579/41627734-55f61bc8-73d6-11e8-85d4-25708de0679e.gif)
+
+![2018-06-19 15 33 27](https://user-images.githubusercontent.com/5973579/41627736-572e1fea-73d6-11e8-989c-17b3967495fe.gif)
+
 ## Getting Started
 
 ```
