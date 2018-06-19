@@ -10,7 +10,7 @@ const transitionContainerStyle = {
   opacity: 1,
   position: 'relative',
   top: 0,
-  transition: `opacity ${CSS_TRANSITION_DURATION / 5}ms ease-in-out, left ${CSS_TRANSITION_DURATION}ms ease-in-out`,
+  transition: `all ${CSS_TRANSITION_DURATION}ms ease-in-out`,
 }
 
 const transitionsState = {

@@ -29,7 +29,7 @@ class Example extends React.Component {
       <div style={{ border: 'solid 1px black', marginLeft: '20%', width: '300px' }}>
         <h1>React View Flow - Example</h1>
 
-        <ViewFlow ref={el => (this.viewFlowRef = el)} withHashState>
+        <ViewFlow ref={el => (this.viewFlowRef = el)} transitionDirection="vertical" withHashState>
           <Step>
             <Step1 />
           </Step>
