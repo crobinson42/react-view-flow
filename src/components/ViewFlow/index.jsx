@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { CSS_TRANSITION_DURATION } from '../../contants'
 import url from '../../util/url'
 
-const CSS_TRANSITION_DURATION = 200
+import Styles from '../../styles/index.css'
 
 class ViewFlow extends Component {
   constructor(props) {
@@ -75,7 +76,9 @@ class ViewFlow extends Component {
     // eslint-disable-next-line no-restricted-globals
     if (isNaN(+stepIndex)) {
       // eslint-disable-next-line no-console
-      console.warn(`<ViewFlow /> step ${stepIndex} is not valid, must be a Number`)
+      console.warn(
+        `<ViewFlow /> step ${stepIndex} is not valid, must be a Number`,
+      )
 
       return null
     }
@@ -105,6 +108,33 @@ class ViewFlow extends Component {
     return React.cloneElement(children[stepIndex], {
       ...props,
     })
+  }
+
+  setContainerDimensions = (heightInt, widthInt) => {
+    if (!this.containerRef) {
+      setTimeout(() => this.setContainerDimensions(heightInt, widthInt), 1)
+      return null
+    } else if (!heightInt || !widthInt) {
+      return null
+    } else if (
+      heightInt === this.containerRef.offsetHeight &&
+      widthInt === this.containerRef.offsetWidth
+    ) {
+      return null
+    }
+
+    this.setState(
+      {
+        containerHeight: `${heightInt}`,
+        containerWidth: `${widthInt}`,
+      },
+      () => {
+        // this.containerRef.style.height = `${this.state.containerHeight}px`
+        // this.containerRef.style.width = `${this.state.containerWidth}px`
+      },
+    )
+
+    return null
   }
 
   complete = () => {
@@ -152,7 +182,7 @@ class ViewFlow extends Component {
             })
           },
           // we add time so that the final state .exited is applied
-          CSS_TRANSITION_DURATION + 50,
+          CSS_TRANSITION_DURATION + (CSS_TRANSITION_DURATION * .1),
         )
       },
     )
@@ -216,7 +246,7 @@ class ViewFlow extends Component {
 
     return (
       <div
-        className="react-view-flow-container"
+        className={Styles['react-view-flow-container']}
         ref={el => (this.containerRef = el)}
       >
         {this.getStepComponentWithProps(step, {
@@ -225,6 +255,7 @@ class ViewFlow extends Component {
             height: containerHeight,
             width: containerWidth,
           },
+          setContainerDimensions: this.setContainerDimensions,
           show: !transitioning,
           transitionDirection,
         })}

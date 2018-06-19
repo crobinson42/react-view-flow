@@ -6,11 +6,7 @@ import Step from '../../src/components/Step'
 const StepMaker = numb => ({ currentStep, nextStep, previousStep }) => {
   return (
     <div>
-      <h4>Step # {currentStep}</h4>
-      {currentStep - 1 > 0 && (
-        <button onClick={previousStep}>Previous {currentStep - 1}</button>
-      )}
-      <button onClick={nextStep}>Go to step {currentStep + 1}</button>
+      <span>Step # {currentStep}</span>
     </div>
   )
 }
@@ -19,40 +15,48 @@ const Step2 = StepMaker(2)
 const Step3 = StepMaker(3)
 const Step4 = StepMaker(4)
 
-const Example = () => (
-  <div>
-    <h1>React View Flow - Example</h1>
+class Example extends React.Component {
+  nextStep = () => {
+    this.viewFlowRef.nextStep()
+  }
 
-    <div
-      style={{
-        backgroundColor: 'grey',
-        paddingTop: '200px',
-        position: 'relative',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        width: '300px',
-      }}
-    >
-      <ViewFlow withHashState>
-        <Step>
-          <Step1 />
-        </Step>
+  previousStep = () => {
+    this.viewFlowRef.previousStep()
+  }
 
-        <Step>
-          <Step2 />
-        </Step>
+  render() {
+    return (
+      <div style={{ border: 'solid 1px black', marginLeft: '20%', width: '300px' }}>
+        <h1>React View Flow - Example</h1>
 
-        <Step>
-          <Step3 />
-        </Step>
+        <ViewFlow ref={el => (this.viewFlowRef = el)} withHashState>
+          <Step>
+            <Step1 />
+          </Step>
 
-        <Step>
-          <Step4 />
-        </Step>
-      </ViewFlow>
-    </div>
-  </div>
-)
+          <Step>
+            <Step2 />
+          </Step>
+
+          <Step>
+            <Step3 />
+          </Step>
+
+          <Step>
+            <Step4 />
+          </Step>
+        </ViewFlow>
+
+
+
+        <div>
+            <button onClick={this.previousStep}>Previous</button>{' '}
+            <button onClick={this.nextStep}>Next</button>
+        </div>
+      </div>
+    )
+  }
+}
 
 Example.propTypes = {}
 Example.defaultProps = {}
