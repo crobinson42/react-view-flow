@@ -6,7 +6,6 @@ import merge from 'lodash.merge'
 import { CSS_TRANSITION_DURATION } from '../../contants'
 
 const transitionContainerStyle = {
-  backgroundColor: 'grey',
   opacity: 1,
   position: 'relative',
   top: 0,
