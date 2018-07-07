@@ -15,7 +15,9 @@
     "semantic-release": "semantic-release"
   },
   "jest": {
-    "transform": { ".*": "<rootDir>/node_modules/jest-css-modules" }
+    "transform": {
+      ".*": "<rootDir>/node_modules/jest-css-modules"
+    }
   },
   "repository": {
     "type": "git",

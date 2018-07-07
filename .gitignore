@@ -2,6 +2,8 @@
 .DS_Store
 .idea/
 
+dist/
+
 example/.cache/
 example/dist/
 example/node_modules/

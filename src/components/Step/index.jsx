@@ -13,17 +13,19 @@ const transitionContainerStyle = {
 }
 
 const transitionsState = {
-  entering: { opacity: 1, },
-  entered: { opacity: 1, },
-  exiting: { opacity: 0, },
+  entering: { opacity: 1 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
   // we reset the transition prop when .exited is applied so the next component
   // render will have a hard edge property and not try to transition to it
   exited: { opacity: 0, transition: 'inherit' },
 }
 
 class Step extends React.Component {
-  setRef = (el) => {
-    this.props.setContainerDimensions(el.offsetHeight, el.offsetWidth)
+  setRef = el => {
+    if (el) {
+      this.props.setContainerDimensions(el.offsetHeight, el.offsetWidth)
+    }
   }
 
   render() {
@@ -69,7 +71,7 @@ class Step extends React.Component {
             }}
           >
             {typeof children === 'function'
-              ? children(...props)
+              ? children(props)
               : React.cloneElement(children, props)}
           </div>
         )}

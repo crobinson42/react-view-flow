@@ -25,8 +25,8 @@ class ViewFlow extends Component {
   componentDidMount() {
     this.updateContainerDimensions()
 
-    if (this.props.ref) {
-      this.props.ref(this.getRefObject())
+    if (this.props.instance) {
+      this.props.instance(this.getRefObject())
     }
 
     if (this.props.withHashState) {
@@ -65,7 +65,7 @@ class ViewFlow extends Component {
     complete: this.complete,
     currentStep: this.state.step + 1,
     firstStep: this.firstStep,
-    goToStep: stepNumber => this.goToStep(stepNumber - 1),
+    goToStep: stepNumber => { console.log('stepNumber', stepNumber); this.goToStep(stepNumber - 1)},
     lastStep: this.lastStep,
     nextStep: this.nextStep,
     previousStep: this.previousStep,
@@ -148,7 +148,7 @@ class ViewFlow extends Component {
   }
 
   firstStep = () => {
-    this.goToStep(this.props.children[0])
+    this.goToStep(0)
   }
 
   goToStep = stepIndex => {
@@ -271,7 +271,7 @@ ViewFlow.propTypes = {
   noAnimation: PropTypes.bool,
   onComplete: PropTypes.func,
   onStep: PropTypes.func,
-  ref: PropTypes.func,
+  instance: PropTypes.func,
   transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
   withHashState: PropTypes.bool,
 }
@@ -282,7 +282,7 @@ ViewFlow.defaultProps = {
   noAnimation: false,
   onComplete: null,
   onStep: null,
-  ref: null,
+  instance: null,
   transitionDirection: 'horizontal',
   withHashState: false,
 }

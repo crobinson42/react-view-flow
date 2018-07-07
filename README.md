@@ -96,7 +96,7 @@ const ExampleFlow = () => (
   onStep={() => {
     /* fired on step change */
   }}
-  ref={el => (this.viewflowRef = el)}
+  instance={el => (this.viewflowRef = el)}
   transitionDirection="horizontal"
   withHashState
 >
@@ -129,7 +129,7 @@ component must only contain `<Step />` components as children.
 | `noAnimation`   | `false`                         | Boolean | Do not show animations on step transitions
 | `onComplete`   | `() => void`                         | Function | A callback that is fired when `nextStep()` is called and there are no more steps
 | `onStep`   | `(stepNumber) => void`                         | Function | A callback that is fired after step change
-| `ref`        | `({ complete: Function, currentStep: Number, firstStep: Function, goToStep: Function, lastStep: Function, nextStep: Function, previousStep: Function, totalSteps: Number }) => void`                             | Function  | A callback fired with an object of methods to manipulate the `<ViewFlow />` instance 
+| `instance`        | `({ complete: Function, currentStep: Number, firstStep: Function, goToStep: Function, lastStep: Function, nextStep: Function, previousStep: Function, totalSteps: Number }) => void`                             | Function  | A callback fired with an object of methods to manipulate the `<ViewFlow />` instance 
 | `transitionDirection` | 'horizontal' | String, `horizontal` or `vertical`  | Optionally set the direction of transition animations     |
 | `withHashState` | 'false' | Boolean  | Keep the step state in the URL hash |
 
