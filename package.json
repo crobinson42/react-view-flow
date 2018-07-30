@@ -5,10 +5,10 @@
   "main": "dist/bundle.min.js",
   "scripts": {
     "build": "NODE_ENV=production && webpack --progress --optimize-minimize",
-    "commitlint": "commitlint -E GIT_PARAMS",
+    "commitlint": "commitlint -e",
     "dev": "webpack-dev-server --config webpack.config.dev.js --hot --hmr --watch",
     "lint": "eslint --fix src/**/*.{js,jsx}",
-    "precommit": "npm run lint",
+    "precommit": "npm run lint && npm run commitlint",
     "prepush": "npm test",
     "travis-deploy-once": "travis-deploy-once",
     "test": "jest",

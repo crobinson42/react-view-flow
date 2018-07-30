@@ -59,6 +59,7 @@ class ViewFlow extends Component {
   componentWillUnmount() {
     if (this.props.withHashState) {
       window.removeEventListener('hashchange', this.hashChangeHandler)
+      this.url.clearHash()
     }
   }
 
