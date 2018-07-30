@@ -1,48 +1,40 @@
 import qs from 'query-string'
 
-let HASH_KEY = 'step'
+export default class Url {
+  HASH_KEY = 'step'
 
-function clearHash() {
-  // eslint-disable-next-line no-use-before-define
-  const hash = getHashObject()
+  constructor(props) {
+    if (props.hashKey) {
+      this.setHashKey(props.hashKey)
+    }
+  }
 
-  delete hash[HASH_KEY]
+  clearHash = () => {
+    const hash = this.getHashObject()
 
-  // eslint-disable-next-line no-restricted-globals
-  location.hash = qs.stringify(hash)
-}
+    delete hash[this.HASH_KEY]
 
-function getHashObject() {
-  // eslint-disable-next-line no-restricted-globals
-  return qs.parse(location.hash)
-}
+    window.location.hash = qs.stringify(hash)
+  }
 
-function getStep() {
-  return getHashObject()[HASH_KEY]
-}
+  getHashObject = () =>
+    qs.parse(window.location.hash)
 
-function setHashKey(key) {
-  HASH_KEY = key
-}
+  getStep = () => this.getHashObject()[this.HASH_KEY]
 
-function setHashParam(param, value) {
-  const hash = getHashObject()
+  setHashKey = key => {
+    this.HASH_KEY = key
+  }
 
-  hash[param] = value
+  setHashParam = (param, value) => {
+    const hash = this.getHashObject()
 
-  // eslint-disable-next-line no-restricted-globals
-  location.hash = qs.stringify(hash)
-}
+    hash[param] = value
 
-function setStep(stepNumber) {
-  setHashParam(HASH_KEY, stepNumber)
-}
+    window.location.hash = qs.stringify(hash)
+  }
 
-export default {
-  clearHash,
-  getHashObject,
-  getStep,
-  setHashKey,
-  setHashParam,
-  setStep,
+  setStep = stepNumber => {
+    this.setHashParam(this.HASH_KEY, stepNumber)
+  }
 }

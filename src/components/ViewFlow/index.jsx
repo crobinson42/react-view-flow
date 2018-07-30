@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { CSS_TRANSITION_DURATION } from '../../contants'
-import url from '../../util/url'
+import Url from '../../util/url'
 
 import Styles from '../../styles/index.css'
 
@@ -10,8 +10,10 @@ class ViewFlow extends Component {
   constructor(props) {
     super(props)
 
+    this.url = new Url({ hashKey: props.hashKey })
+
     const step =
-      (props.withHashState && url.getStep() - 1) || props.initialStep - 1 || 0
+      (props.withHashState && this.url.getStep() - 1) || props.initialStep - 1 || 0
 
     this.state = {
       containerHeight: 0,
@@ -31,7 +33,7 @@ class ViewFlow extends Component {
 
     if (this.props.withHashState) {
       if (this.props.hashKey) {
-        url.setHashKey(this.props.hashKey)
+        this.url.setHashKey(this.props.hashKey)
       }
 
       this.updateHash()
@@ -143,7 +145,7 @@ class ViewFlow extends Component {
     }
 
     if (this.props.withHashState) {
-      url.clearHash()
+      this.url.clearHash()
     }
   }
 
@@ -191,7 +193,7 @@ class ViewFlow extends Component {
   }
 
   hashChangeHandler = () => {
-    const hash = url.getStep()
+    const hash = this.url.getStep()
 
     if (hash !== this.state.step + 1) {
       this.goToStep(hash - 1)
@@ -229,7 +231,7 @@ class ViewFlow extends Component {
     }
   }
 
-  updateHash = () => url.setStep(this.state.step + 1)
+  updateHash = () => this.url.setStep(this.state.step + 1)
 
   render() {
     const {
