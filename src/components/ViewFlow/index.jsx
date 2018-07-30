@@ -67,7 +67,7 @@ class ViewFlow extends Component {
     complete: this.complete,
     currentStep: this.state.step + 1,
     firstStep: this.firstStep,
-    goToStep: stepNumber => { console.log('stepNumber', stepNumber); this.goToStep(stepNumber - 1)},
+    goToStep: stepNumber => { this.goToStep(stepNumber - 1)},
     lastStep: this.lastStep,
     nextStep: this.nextStep,
     previousStep: this.previousStep,
