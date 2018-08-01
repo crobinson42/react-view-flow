@@ -59,7 +59,7 @@ class ViewFlow extends Component {
   componentWillUnmount() {
     if (this.props.withHashState) {
       window.removeEventListener('hashchange', this.hashChangeHandler)
-      this.url.clearHash()
+      if (!this.props.maintainHashKey) this.url.clearHash()
     }
   }
 
@@ -271,6 +271,7 @@ ViewFlow.propTypes = {
   children: PropTypes.node,
   initialStep: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   hashKey: PropTypes.string,
+  maintainHashKey: PropTypes.bool,
   noAnimation: PropTypes.bool,
   onComplete: PropTypes.func,
   onStep: PropTypes.func,
@@ -282,6 +283,7 @@ ViewFlow.defaultProps = {
   children: [],
   initialStep: 1,
   hashKey: 'step',
+  maintainHashKey: false,
   noAnimation: false,
   onComplete: null,
   onStep: null,

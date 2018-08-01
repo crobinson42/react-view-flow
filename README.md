@@ -55,7 +55,7 @@ import React from 'react'
 const MyFirstScreen = ({ currentStep, nextStep }) => (
     <div>
         <h1>Step # {currentStep}</h1>
-        
+
         <button onClick={nextStep}>Next</button>
     </div>
 )
@@ -63,7 +63,7 @@ const MyFirstScreen = ({ currentStep, nextStep }) => (
 const MySecondScreen = ({ currentStep, nextStep, previousStep }) => (
     <div>
         <h1>Step # {currentStep}</h1>
-        
+
         <button onClick={previousStep}>Back</button>
         {' '}
         <button onClick={nextStep}>Next</button>
@@ -75,7 +75,7 @@ const ExampleFlow = () => (
       <Step>
         <MyFirstScreen />
       </Step>
-      
+
       <Step>
         <MySecondScreen />
       </Step>
@@ -89,6 +89,7 @@ const ExampleFlow = () => (
 <ViewFlow
   hashKey="step"
   initialStep="2"
+  maintainHashKey={false}
   noAnimation
   onComplete={() => {
     /* fired after last step */
@@ -126,10 +127,11 @@ component must only contain `<Step />` components as children.
 | ------------- | ------------------------------- | ------- | -------------------------------------------- |
 | `initialStep`   | `1`                         | Number, String |
 | `hashKey`   | `step`                         | String | The default key to use in url hash if prop `withHashState` is true
+| `maintainHashKey`   | `false`                         | Boolean | When the <ViewFlow /> component unmounts it will clear the url hash key unless this prop is `true`
 | `noAnimation`   | `false`                         | Boolean | Do not show animations on step transitions
 | `onComplete`   | `() => void`                         | Function | A callback that is fired when `nextStep()` is called and there are no more steps
 | `onStep`   | `(stepNumber) => void`                         | Function | A callback that is fired after step change
-| `instance`        | `({ complete: Function, currentStep: Number, firstStep: Function, goToStep: Function, lastStep: Function, nextStep: Function, previousStep: Function, totalSteps: Number }) => void`                             | Function  | A callback fired with an object of methods to manipulate the `<ViewFlow />` instance 
+| `instance`        | `({ complete: Function, currentStep: Number, firstStep: Function, goToStep: Function, lastStep: Function, nextStep: Function, previousStep: Function, totalSteps: Number }) => void`                             | Function  | A callback fired with an object of methods to manipulate the `<ViewFlow />` instance
 | `transitionDirection` | 'horizontal' | String, `horizontal` or `vertical`  | Optionally set the direction of transition animations     |
 | `withHashState` | 'false' | Boolean  | Keep the step state in the URL hash |
 
