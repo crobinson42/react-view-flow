@@ -22,6 +22,15 @@ const transitionsState = {
 }
 
 class Step extends React.Component {
+
+  componentDidMount() {
+    if (this.props.onMount) this.props.onMount()
+  }
+
+  componentWillUnmount() {
+    if (this.props.onUnmount) this.props.onUnmount()
+  }
+
   setRef = el => {
     if (el) {
       this.props.setContainerDimensions(el.offsetHeight, el.offsetWidth)
@@ -83,6 +92,9 @@ class Step extends React.Component {
 Step.propTypes = {
   children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
   exitDirection: PropTypes.oneOf(['left', 'right']),
+  id: PropTypes.string,
+  onMount: PropTypes.func,
+  onUnmount: PropTypes.func,
   parentDimensions: PropTypes.shape({
     height: PropTypes.number,
     width: PropTypes.number,

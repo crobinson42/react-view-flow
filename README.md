@@ -125,22 +125,30 @@ component must only contain `<Step />` components as children.
 
 | Name          | Default                         | Type    | Description                                  |
 | ------------- | ------------------------------- | ------- | -------------------------------------------- |
-| `initialStep`   | `1`                         | Number, String |
-| `hashKey`   | `step`                         | String | The default key to use in url hash if prop `withHashState` is true
-| `maintainHashKey`   | `false`                         | Boolean | When the <ViewFlow /> component unmounts it will clear the url hash key unless this prop is `true`
-| `noAnimation`   | `false`                         | Boolean | Do not show animations on step transitions
-| `onComplete`   | `() => void`                         | Function | A callback that is fired when `nextStep()` is called and there are no more steps
-| `onStep`   | `(stepNumber) => void`                         | Function | A callback that is fired after step change
+| `initialStep`   | `1`  | Number, String |
+| `hashKey`   | `step`  | String | The default key to use in url hash if prop `withHashState` is true
+| `maintainHashKey`   | `false`  | Boolean | When the <ViewFlow /> component unmounts it will clear the url hash key unless this prop is `true`
+| `noAnimation`   | `false`  | Boolean | Do not show animations on step transitions
+| `onComplete`   | `() => void`  | Function | A callback that is fired when `nextStep()` is called and there are no more steps
+| `onStep`   | `(stepNumber) => void`  | Function | A callback that is fired after step change
 | `instance`        | `({ complete: Function, currentStep: Number, firstStep: Function, goToStep: Function, lastStep: Function, nextStep: Function, previousStep: Function, totalSteps: Number }) => void`                             | Function  | A callback fired with an object of methods to manipulate the `<ViewFlow />` instance
 | `transitionDirection` | 'horizontal' | String, `horizontal` or `vertical`  | Optionally set the direction of transition animations     |
 | `withHashState` | 'false' | Boolean  | Keep the step state in the URL hash |
 
 ## `<Step />` Component
 
+#### Props
+
+| Name          | Default                         | Type    | Description                                  |
+| ------------- | ------------------------------- | ------- | -------------------------------------------- |
+| `id`  | `number` | Number, String | If you would like to use a custom id instead of the step number to reference a step, use this prop. You can then reference the step like this: `goToStep('id_string')` and also in a hndler for the prop `<ViewFlow onStep={(stepId) => {...}} />`
+| `onMount`  | `() => void` | Function | If you pass a function to this prop it will be invoked with the `<Step />` mounts
+| `onUnmount`  | `() => void` | Function | If you pass a function to this prop it will be invoked with the `<Step />` unmounts
+
 The `<Step />` component must be a child of `<ViewFlow />` and must also contain a
 child component.
 
-#### Props
+#### Props Pass to `Step` Children
 
 | Name | Default | Type | Description |
 | ---- | ------- | ---- | ----------- |
