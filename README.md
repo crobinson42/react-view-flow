@@ -141,7 +141,7 @@ component must only contain `<Step />` components as children.
 
 | Name          | Default                         | Type    | Description                                  |
 | ------------- | ------------------------------- | ------- | -------------------------------------------- |
-| `id`  | `number` | Number, String | If you would like to use a custom id instead of the step number to reference a step, use this prop. You can then reference the step like this: `goToStep('id_string')` and also in a hndler for the prop `<ViewFlow onStep={(stepId) => {...}} />`
+| `id`  |  | String | If you would like to use a custom id instead of the step number to reference a step, use this prop. You can then reference the step like this: `goToStep('id_string')` and also in a hndler for the prop `<ViewFlow onStep={(stepId) => {...}} />`
 | `onMount`  | `() => void` | Function | If you pass a function to this prop it will be invoked with the `<Step />` mounts
 | `onUnmount`  | `() => void` | Function | If you pass a function to this prop it will be invoked with the `<Step />` unmounts
 

@@ -13,7 +13,9 @@ class ViewFlow extends Component {
     this.url = new Url({ hashKey: props.hashKey })
 
     const step =
-      (props.withHashState && this.url.getStep() - 1) || props.initialStep - 1 || 0
+      (props.withHashState && this.url.getStep() - 1) ||
+      props.initialStep - 1 ||
+      0
 
     this.state = {
       containerHeight: 0,
@@ -28,7 +30,7 @@ class ViewFlow extends Component {
     this.updateContainerDimensions()
 
     if (this.props.instance) {
-      this.props.instance(this.getRefObject())
+      this.props.instance(this.getInstanceApi())
     }
 
     if (this.props.withHashState) {
@@ -47,7 +49,8 @@ class ViewFlow extends Component {
 
     if (prevState.step !== this.state.step) {
       if (this.props.onStep) {
-        this.props.onStep(this.state.step + 1)
+        const stepNumber = this.state.step + 1
+        this.props.onStep(this.getStepIdFromIndex(this.state.step) || stepNumber)
       }
 
       if (this.props.withHashState) {
@@ -63,17 +66,32 @@ class ViewFlow extends Component {
     }
   }
 
-  getRefObject = () => ({
-    __ViewFlow: this,
-    complete: this.complete,
-    currentStep: this.state.step + 1,
-    firstStep: this.firstStep,
-    goToStep: stepNumber => { this.goToStep(stepNumber - 1)},
-    lastStep: this.lastStep,
-    nextStep: this.nextStep,
-    previousStep: this.previousStep,
-    totalSteps: this.props.children.length,
-  })
+  getInstanceApi = () => {
+    const self = this
+
+    return {
+      __ViewFlow: this,
+      complete: this.complete,
+      get currentStep() {
+        const currentIndex = self.state.step
+
+        if (self.getStepIdFromIndex(currentIndex))
+          return self.getStepIdFromIndex(currentIndex)
+
+        return currentIndex + 1
+      },
+      firstStep: this.firstStep,
+      goToStep: step => {
+        if (typeof step === 'string' && typeof this.getStepIndexFromId(step) === 'number')
+          this.goToStep(this.getStepIndexFromId(step))
+        else this.goToStep(step - 1)
+      },
+      lastStep: this.lastStep,
+      nextStep: this.nextStep,
+      previousStep: this.previousStep,
+      totalSteps: this.props.children.length,
+    }
+  }
 
   getStepComponentWithProps = (stepIndex, addProps) => {
     // eslint-disable-next-line no-restricted-globals
@@ -87,30 +105,44 @@ class ViewFlow extends Component {
     }
 
     const { children } = this.props
-    const { containerHeight, containerWidth, step } = this.state
+    const { containerHeight, containerWidth } = this.state
 
     if (!children.length || !children[stepIndex]) {
       return null
     }
 
     const props = {
-      currentStep: step + 1,
-      firstStep: this.firstStep,
-      goToStep: stepNumber => this.goToStep(stepNumber - 1),
-      lastStep: this.lastStep,
-      nextStep: this.nextStep,
+      ...addProps,
+      ...this.getInstanceApi(),
       parentDimensions: {
         height: containerHeight,
         width: containerWidth,
       },
-      previousStep: this.previousStep,
-      totalSteps: children.length,
-      ...addProps,
+      setContainerDimensions: this.setContainerDimensions,
     }
 
     return React.cloneElement(children[stepIndex], {
       ...props,
     })
+  }
+
+  getStepIdFromIndex = stepIndex => {
+    const child = this.props.children[stepIndex]
+    if (child.props.id)
+      return child.props.id
+
+    return undefined
+  }
+
+  getStepIndexFromId = id => {
+    const stepIndex = this.props.children.reduce((acc, step, index) => {
+      // eslint-disable-next-line no-param-reassign
+      if (step.props.id === id) acc = index
+
+      return acc
+    }, undefined)
+
+    return stepIndex
   }
 
   setContainerDimensions = (heightInt, widthInt) => {
@@ -185,7 +217,7 @@ class ViewFlow extends Component {
             })
           },
           // we add time so that the final state .exited is applied
-          CSS_TRANSITION_DURATION + (CSS_TRANSITION_DURATION * .1),
+          CSS_TRANSITION_DURATION + CSS_TRANSITION_DURATION * 0.1,
         )
       },
     )

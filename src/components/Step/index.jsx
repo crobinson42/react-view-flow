@@ -105,6 +105,9 @@ Step.propTypes = {
 }
 Step.defaultProps = {
   exitDirection: 'left',
+  id: undefined,
+  onMount: undefined,
+  onUnmount: undefined,
   parentDimensions: { height: 0, width: 0 },
   show: false,
   transitionDirection: 'horizontal',

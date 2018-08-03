@@ -20,6 +20,11 @@ class Example extends React.Component {
     this.viewFlowRef.nextStep()
   }
 
+  onStep = step => {
+    console.log('step', step)
+    console.log('this.viewFlowRef.currentStep', this.viewFlowRef.currentStep)
+  }
+
   previousStep = () => {
     this.viewFlowRef.previousStep()
   }
@@ -29,8 +34,8 @@ class Example extends React.Component {
       <div style={{ border: 'solid 1px black', marginLeft: '20%', width: '300px' }}>
         <h1>React View Flow - Example</h1>
 
-        <ViewFlow ref={el => (this.viewFlowRef = el)} transitionDirection="vertical" withHashState>
-          <Step>
+        <ViewFlow onStep={this.onStep} instance={el => (this.viewFlowRef = el)} transitionDirection="vertical" withHashState>
+          <Step id='step1'>
             <Step1 />
           </Step>
 
@@ -38,7 +43,7 @@ class Example extends React.Component {
             <Step2 />
           </Step>
 
-          <Step>
+          <Step id='step3'>
             <Step3 />
           </Step>
 
@@ -47,7 +52,14 @@ class Example extends React.Component {
           </Step>
         </ViewFlow>
 
-
+        <div>
+          <button onClick={() => this.viewFlowRef.goToStep('step3')}>
+            Go To "Step3"
+          </button>
+          <button onClick={() => this.viewFlowRef.goToStep('step3fdsaff')}>
+            Go To an undefined step
+          </button>
+        </div>
 
         <div>
             <button onClick={this.previousStep}>Previous</button>{' '}
