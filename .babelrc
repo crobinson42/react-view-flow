@@ -1,4 +1,4 @@
 {
     "presets": ["env", "stage-3", "react"],
-    "plugins": ["transform-object-rest-spread", ["transform-class-properties", { "spec": true }]]
+    "plugins": ["transform-object-rest-spread", ["transform-class-properties", { "spec": true }], "transform-flow-strip-types"]
 }

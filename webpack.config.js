@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: `${__dirname}/dist`,
-    filename: 'bundle.min.js',
+    filename: 'index.js',
     libraryTarget: 'umd',
     publicPath: '/dist/',
     umdNamedDefine: true,
