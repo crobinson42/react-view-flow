@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+// @flow
+import * as React from 'react'
 import PropTypes from 'prop-types'
 
 import { CSS_TRANSITION_DURATION } from '../../contants'
@@ -6,14 +7,61 @@ import Url from '../../util/url'
 
 import Styles from '../../styles/index.css'
 
-class ViewFlow extends Component {
-  constructor(props) {
+type ViewFlowProps = {
+  children: Array<React.Node>,
+  initialStep: number,
+  hashKey: string,
+  maintainHashKey: boolean,
+  noAnimation: boolean,
+  onComplete: () => void,
+  onStep: number => void,
+  instance: Object => void,
+  transitionDirection: string,
+  withHashState: boolean,
+}
+
+type ViewFlowState = {
+  containerHeight: number,
+  containerWidth: number,
+  step: number,
+  transitioning: boolean,
+  exitDirection: string,
+}
+
+class ViewFlow extends React.Component<ViewFlowProps, ViewFlowState> {
+  static propTypes = {
+    children: PropTypes.node,
+    initialStep: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    hashKey: PropTypes.string,
+    maintainHashKey: PropTypes.bool,
+    noAnimation: PropTypes.bool,
+    onComplete: PropTypes.func,
+    onStep: PropTypes.func,
+    instance: PropTypes.func,
+    transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
+    withHashState: PropTypes.bool,
+  }
+
+  static defaultProps = {
+    children: [],
+    initialStep: 1,
+    hashKey: 'step',
+    maintainHashKey: false,
+    noAnimation: false,
+    onComplete: null,
+    onStep: null,
+    instance: null,
+    transitionDirection: 'horizontal',
+    withHashState: false,
+  }
+
+  constructor(props: ViewFlowProps) {
     super(props)
 
     this.url = new Url({ hashKey: props.hashKey })
 
     const step =
-      (props.withHashState && this.url.getStep() - 1) ||
+      (props.withHashState && +this.url.getStep() - 1) ||
       props.initialStep - 1 ||
       0
 
@@ -44,13 +92,15 @@ class ViewFlow extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: ViewFlowProps, prevState: ViewFlowState) {
     this.updateContainerDimensions()
 
     if (prevState.step !== this.state.step) {
       if (this.props.onStep) {
         const stepNumber = this.state.step + 1
-        this.props.onStep(this.getStepIdFromIndex(this.state.step) || stepNumber)
+        this.props.onStep(
+          this.getStepIdFromIndex(this.state.step) || stepNumber,
+        )
       }
 
       if (this.props.withHashState) {
@@ -81,10 +131,18 @@ class ViewFlow extends Component {
         return currentIndex + 1
       },
       firstStep: this.firstStep,
-      goToStep: step => {
-        if (typeof step === 'string' && typeof this.getStepIndexFromId(step) === 'number')
+      goToStep: (step: number | string) => {
+        if (
+          typeof step === 'string' &&
+          typeof this.getStepIndexFromId(step) === 'number'
+        )
           this.goToStep(this.getStepIndexFromId(step))
-        else this.goToStep(step - 1)
+        else if (typeof step === 'number') this.goToStep(step - 1)
+        // eslint-disable-next-line no-console
+        else
+          console.warn(
+            `<ViewFlow/> gotToStep(string | number) incompatible typeof "${typeof step}"`,
+          )
       },
       lastStep: this.lastStep,
       nextStep: this.nextStep,
@@ -93,7 +151,7 @@ class ViewFlow extends Component {
     }
   }
 
-  getStepComponentWithProps = (stepIndex, addProps) => {
+  getStepComponentWithProps = (stepIndex: number, addProps: Object) => {
     // eslint-disable-next-line no-restricted-globals
     if (isNaN(+stepIndex)) {
       // eslint-disable-next-line no-console
@@ -104,7 +162,7 @@ class ViewFlow extends Component {
       return null
     }
 
-    const { children } = this.props
+    const children = React.Children.toArray(this.props.children)
     const { containerHeight, containerWidth } = this.state
 
     if (!children.length || !children[stepIndex]) {
@@ -126,26 +184,33 @@ class ViewFlow extends Component {
     })
   }
 
-  getStepIdFromIndex = stepIndex => {
+  getStepIdFromIndex = (stepIndex: number) => {
     const child = this.props.children[stepIndex]
-    if (child.props.id)
-      return child.props.id
+
+    // $FlowFixMe
+    if (child && child.props.id) return child.props.id
 
     return undefined
   }
 
-  getStepIndexFromId = id => {
-    const stepIndex = this.props.children.reduce((acc, step, index) => {
-      // eslint-disable-next-line no-param-reassign
-      if (step.props.id === id) acc = index
+  getStepIndexFromId: string => number = id => {
+    const stepIndex = React.Children.toArray(this.props.children).reduce(
+      (acc: null | number, step: Object, index: number) => {
+        // eslint-disable-next-line no-param-reassign
+        if (step.props && step.props.id === id) acc = index
 
-      return acc
-    }, undefined)
+        return acc
+      },
+      null,
+    )
+
+    if (typeof stepIndex !== 'number')
+      throw new Error(`<ViewFlow> step id cannot be found: ${id}`)
 
     return stepIndex
   }
 
-  setContainerDimensions = (heightInt, widthInt) => {
+  setContainerDimensions = (heightInt: number, widthInt: number) => {
     if (!this.containerRef) {
       setTimeout(() => this.setContainerDimensions(heightInt, widthInt), 1)
       return null
@@ -160,8 +225,8 @@ class ViewFlow extends Component {
 
     this.setState(
       {
-        containerHeight: `${heightInt}`,
-        containerWidth: `${widthInt}`,
+        containerHeight: heightInt,
+        containerWidth: widthInt,
       },
       () => {
         // this.containerRef.style.height = `${this.state.containerHeight}px`
@@ -171,6 +236,10 @@ class ViewFlow extends Component {
 
     return null
   }
+
+  containerRef: HTMLDivElement
+
+  url: Url
 
   complete = () => {
     if (this.props.onComplete) {
@@ -186,7 +255,7 @@ class ViewFlow extends Component {
     this.goToStep(0)
   }
 
-  goToStep = stepIndex => {
+  goToStep = (stepIndex: number) => {
     if (this.props.noAnimation) {
       return this.setState({
         step: stepIndex,
@@ -226,9 +295,13 @@ class ViewFlow extends Component {
   }
 
   hashChangeHandler = () => {
-    const hash = this.url.getStep()
-
-    if (hash !== this.state.step + 1) {
+    const hash = +this.url.getStep()
+    if (typeof hash !== 'number')
+      console.error(
+        `<ViewFlow> hashChangeHandler() hash cannot be coerced to a number, ${this.url.getStep()}`,
+      )
+    // eslint-disable-next-line no-restricted-globals
+    else if (!isNaN(hash) && hash !== this.state.step + 1) {
       this.goToStep(hash - 1)
     }
   }
@@ -264,7 +337,9 @@ class ViewFlow extends Component {
     }
   }
 
-  updateHash = () => this.url.setStep(this.state.step + 1)
+  updateHash = () => {
+    this.url.setStep(this.state.step + 1)
+  }
 
   render() {
     const {
@@ -282,6 +357,7 @@ class ViewFlow extends Component {
     return (
       <div
         className={Styles['react-view-flow-container']}
+        // $FlowFixMe
         ref={el => (this.containerRef = el)}
       >
         {this.getStepComponentWithProps(step, {
@@ -297,31 +373,6 @@ class ViewFlow extends Component {
       </div>
     )
   }
-}
-
-ViewFlow.propTypes = {
-  children: PropTypes.node,
-  initialStep: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  hashKey: PropTypes.string,
-  maintainHashKey: PropTypes.bool,
-  noAnimation: PropTypes.bool,
-  onComplete: PropTypes.func,
-  onStep: PropTypes.func,
-  instance: PropTypes.func,
-  transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
-  withHashState: PropTypes.bool,
-}
-ViewFlow.defaultProps = {
-  children: [],
-  initialStep: 1,
-  hashKey: 'step',
-  maintainHashKey: false,
-  noAnimation: false,
-  onComplete: null,
-  onStep: null,
-  instance: null,
-  transitionDirection: 'horizontal',
-  withHashState: false,
 }
 
 export default ViewFlow

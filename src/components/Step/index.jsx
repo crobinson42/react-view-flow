@@ -1,4 +1,5 @@
-import React from 'react'
+// @flow
+import * as React from 'react'
 import PropTypes from 'prop-types'
 import Transition from 'react-transition-group/Transition'
 import merge from 'lodash.merge'
@@ -21,7 +22,45 @@ const transitionsState = {
   exited: { opacity: 0, transition: 'inherit' },
 }
 
-class Step extends React.Component {
+type StepProps = {
+  children: Function | React.Node,
+  exitDirection: 'string',
+  id: string,
+  onMount: Function,
+  onUnmount: Function,
+  parentDimensions: { height: number, width: number },
+  setContainerDimensions: Function,
+  show: boolean,
+  transitionDirection: string,
+}
+
+type StepState = {}
+
+class Step extends React.Component<StepProps, StepState> {
+  static propTypes = {
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
+    exitDirection: PropTypes.oneOf(['left', 'right']),
+    id: PropTypes.string,
+    onMount: PropTypes.func,
+    onUnmount: PropTypes.func,
+    parentDimensions: PropTypes.shape({
+      height: PropTypes.number,
+      width: PropTypes.number,
+    }),
+    setContainerDimensions: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
+  }
+
+  static defaultProps = {
+    exitDirection: 'left',
+    id: undefined,
+    onMount: undefined,
+    onUnmount: undefined,
+    parentDimensions: { height: 0, width: 0 },
+    show: false,
+    transitionDirection: 'horizontal',
+  }
 
   componentDidMount() {
     if (this.props.onMount) this.props.onMount()
@@ -31,7 +70,7 @@ class Step extends React.Component {
     if (this.props.onUnmount) this.props.onUnmount()
   }
 
-  setRef = el => {
+  setRef = (el: HTMLDivElement) => {
     if (el) {
       this.props.setContainerDimensions(el.offsetHeight, el.offsetWidth)
     }
@@ -73,6 +112,7 @@ class Step extends React.Component {
       <Transition in={show} timeout={CSS_TRANSITION_DURATION}>
         {state => (
           <div
+            // $FlowFixMe
             ref={this.setRef}
             style={{
               ...transitionContainerStyle,
@@ -81,7 +121,7 @@ class Step extends React.Component {
           >
             {typeof children === 'function'
               ? children(props)
-              : React.cloneElement(children, props)}
+              : React.cloneElement(React.Children.only(children), props)}
           </div>
         )}
       </Transition>
@@ -89,28 +129,5 @@ class Step extends React.Component {
   }
 }
 
-Step.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
-  exitDirection: PropTypes.oneOf(['left', 'right']),
-  id: PropTypes.string,
-  onMount: PropTypes.func,
-  onUnmount: PropTypes.func,
-  parentDimensions: PropTypes.shape({
-    height: PropTypes.number,
-    width: PropTypes.number,
-  }),
-  setContainerDimensions: PropTypes.func.isRequired,
-  show: PropTypes.bool,
-  transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
-}
-Step.defaultProps = {
-  exitDirection: 'left',
-  id: undefined,
-  onMount: undefined,
-  onUnmount: undefined,
-  parentDimensions: { height: 0, width: 0 },
-  show: false,
-  transitionDirection: 'horizontal',
-}
 
 export default Step

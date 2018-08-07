@@ -34,7 +34,7 @@ class Example extends React.Component {
       <div style={{ border: 'solid 1px black', marginLeft: '20%', width: '300px' }}>
         <h1>React View Flow - Example</h1>
 
-        <ViewFlow onStep={this.onStep} instance={el => (this.viewFlowRef = el)} transitionDirection="vertical" withHashState>
+        <ViewFlow hashKey="myhashkey" onStep={this.onStep} instance={el => (this.viewFlowRef = el)} transitionDirection="vertical" withHashState>
           <Step id='step1'>
             <Step1 />
           </Step>

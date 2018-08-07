@@ -1,9 +1,14 @@
+// @flow
 import qs from 'query-string'
+
+type UrlProps = {
+  hashKey?: string
+}
 
 export default class Url {
   HASH_KEY = 'step'
 
-  constructor(props) {
+  constructor(props: UrlProps) {
     if (props.hashKey) {
       this.setHashKey(props.hashKey)
     }
@@ -17,16 +22,16 @@ export default class Url {
     window.location.hash = qs.stringify(hash)
   }
 
-  getHashObject = () =>
+  getHashObject: () => Object = () =>
     qs.parse(window.location.hash)
 
-  getStep = () => this.getHashObject()[this.HASH_KEY]
+  getStep: () => string = () => this.getHashObject()[this.HASH_KEY]
 
-  setHashKey = key => {
+  setHashKey = (key: string) => {
     this.HASH_KEY = key
   }
 
-  setHashParam = (param, value) => {
+  setHashParam = (param: string, value: number | string) => {
     const hash = this.getHashObject()
 
     hash[param] = value
@@ -34,7 +39,7 @@ export default class Url {
     window.location.hash = qs.stringify(hash)
   }
 
-  setStep = stepNumber => {
+  setStep = (stepNumber: number) => {
     this.setHashParam(this.HASH_KEY, stepNumber)
   }
 }
