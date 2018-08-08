@@ -68,7 +68,6 @@ class Step extends React.Component<StepProps, StepState> {
   }
 
   componentWillUnmount() {
-    console.log('step unmounting...', this.props.onUnmount)
     if (this.props.onUnmount) this.props.onUnmount()
   }
 
