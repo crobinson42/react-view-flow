@@ -6,10 +6,9 @@
   "scripts": {
     "build": "NODE_ENV=production && webpack --progress --optimize-minimize && flow-copy-source src dist",
     "build-dev": "webpack --progress --optimize-minimize",
-    "commitlint": "commitlint -e",
     "dev": "webpack-dev-server --config webpack.config.dev.js --hot --hmr --watch",
     "lint": "eslint --fix src/**/*.{js,jsx}",
-    "precommit": "npm run lint && flow && npm run commitlint",
+    "precommit": "npm run lint && flow",
     "prepush": "npm test",
     "travis-deploy-once": "travis-deploy-once",
     "test": "jest",

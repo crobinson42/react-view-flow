@@ -24,7 +24,7 @@ const transitionsState = {
 
 type StepProps = {
   children: Function | React.Node,
-  exitDirection?: 'string',
+  exitDirection?: string,
   id?: string,
   onMount?: Function,
   onUnmount?: Function,
