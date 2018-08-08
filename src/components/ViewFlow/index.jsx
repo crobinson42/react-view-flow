@@ -13,9 +13,9 @@ type ViewFlowProps = {
   hashKey: string,
   maintainHashKey: boolean,
   noAnimation: boolean,
-  onComplete: () => void,
-  onStep: number => void,
-  instance: Object => void,
+  onComplete: () => any,
+  onStep: number => any,
+  instance: Object => any,
   transitionDirection: string,
   withHashState: boolean,
 }
