@@ -9,12 +9,12 @@ import Styles from '../../styles/index.css'
 
 type ViewFlowProps = {
   children: Array<React.Node>,
-  initialStep: number,
+  initialStep: number | string,
   hashKey: string,
   maintainHashKey: boolean,
   noAnimation: boolean,
   onComplete: () => any,
-  onStep: number => any,
+  onStep: (number | string) => any,
   instance: Object => any,
   transitionDirection: string,
   withHashState: boolean,
@@ -62,8 +62,9 @@ class ViewFlow extends React.Component<ViewFlowProps, ViewFlowState> {
 
     const step =
       (props.withHashState && +this.url.getStep() - 1) ||
-      props.initialStep - 1 ||
-      0
+      typeof props.initialStep === 'string'
+        ? this.getStepIndexFromId(String(this.props.initialStep))
+        : +this.props.initialStep - 1 || 0
 
     this.state = {
       containerHeight: 0,
@@ -138,8 +139,8 @@ class ViewFlow extends React.Component<ViewFlowProps, ViewFlowState> {
         )
           this.goToStep(this.getStepIndexFromId(step))
         else if (typeof step === 'number') this.goToStep(step - 1)
-        // eslint-disable-next-line no-console
         else
+          // eslint-disable-next-line no-console
           console.warn(
             `<ViewFlow/> gotToStep(string | number) incompatible typeof "${typeof step}"`,
           )
@@ -152,7 +153,6 @@ class ViewFlow extends React.Component<ViewFlowProps, ViewFlowState> {
   }
 
   getStepComponentWithProps = (stepIndex: number, addProps: Object) => {
-    // eslint-disable-next-line no-restricted-globals
     if (isNaN(+stepIndex)) {
       // eslint-disable-next-line no-console
       console.warn(
@@ -296,12 +296,11 @@ class ViewFlow extends React.Component<ViewFlowProps, ViewFlowState> {
 
   hashChangeHandler = () => {
     const hash = +this.url.getStep()
-    if (typeof hash !== 'number')
+    if (typeof hash !== 'number') {
       console.error(
         `<ViewFlow> hashChangeHandler() hash cannot be coerced to a number, ${this.url.getStep()}`,
       )
-    // eslint-disable-next-line no-restricted-globals
-    else if (!isNaN(hash) && hash !== this.state.step + 1) {
+    } else if (!isNaN(hash) && hash !== this.state.step + 1) {
       this.goToStep(hash - 1)
     }
   }

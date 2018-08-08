@@ -24,6 +24,7 @@
     "jsx-a11y/no-static-element-interactions": [0],
     "jsx-a11y/no-noninteractive-element-interactions": [0],
     "no-return-assign": [0], // redux reducers use return-assignment
+    "no-restricted-globals": [0], // isNaN use
     "react/no-danger": [0], // we use this for spacers
     "react/no-typos": [0], // eslint thinks our variable names are typos
     "react/no-unescaped-entities": [0],
