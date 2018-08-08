@@ -24,14 +24,14 @@ const transitionsState = {
 
 type StepProps = {
   children: Function | React.Node,
-  exitDirection: 'string',
-  id: string,
-  onMount: Function,
-  onUnmount: Function,
-  parentDimensions: { height: number, width: number },
-  setContainerDimensions: Function,
-  show: boolean,
-  transitionDirection: string,
+  exitDirection?: 'string',
+  id?: string,
+  onMount?: Function,
+  onUnmount?: Function,
+  parentDimensions?: { height: number, width: number },
+  setContainerDimensions?: Function,
+  show?: boolean,
+  transitionDirection?: string,
 }
 
 type StepState = {}
@@ -47,7 +47,7 @@ class Step extends React.Component<StepProps, StepState> {
       height: PropTypes.number,
       width: PropTypes.number,
     }),
-    setContainerDimensions: PropTypes.func.isRequired,
+    setContainerDimensions: PropTypes.func,
     show: PropTypes.bool,
     transitionDirection: PropTypes.oneOf(['horizontal', 'vertical']),
   }
@@ -58,6 +58,7 @@ class Step extends React.Component<StepProps, StepState> {
     onMount: undefined,
     onUnmount: undefined,
     parentDimensions: { height: 0, width: 0 },
+    setContainerDimensions: () => null,
     show: false,
     transitionDirection: 'horizontal',
   }
@@ -67,11 +68,12 @@ class Step extends React.Component<StepProps, StepState> {
   }
 
   componentWillUnmount() {
+    console.log('step unmounting...', this.props.onUnmount)
     if (this.props.onUnmount) this.props.onUnmount()
   }
 
   setRef = (el: HTMLDivElement) => {
-    if (el) {
+    if (el && this.props.setContainerDimensions) {
       this.props.setContainerDimensions(el.offsetHeight, el.offsetWidth)
     }
   }
@@ -89,20 +91,22 @@ class Step extends React.Component<StepProps, StepState> {
 
     const axisEdge = transitionDirection === 'horizontal' ? 'left' : 'top'
 
+    const parentWidth = parentDimensions && parentDimensions.width || 0
+
     const transitionsDirection = {
       entering: { [axisEdge]: 0 },
       entered: { [axisEdge]: 0 },
       exiting: {
         [axisEdge]:
           exitDirection === 'left'
-            ? -parentDimensions.width
-            : parentDimensions.width,
+            ? -parentWidth
+            : parentWidth,
       },
       exited: {
         [axisEdge]:
           exitDirection === 'left'
-            ? parentDimensions.width
-            : -parentDimensions.width,
+            ? parentWidth
+            : -parentWidth,
       },
     }
 

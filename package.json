@@ -58,6 +58,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "classnames": "^2.2.6",
     "css-loader": "^0.28.11",
+    "empty": "^0.10.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",
